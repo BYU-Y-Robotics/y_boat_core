@@ -16,9 +16,30 @@ RUN apt-get update && apt-get install -y \
     udev \
     && rm -rf /var/lib/apt/lists/*
 
+# MAVROS: the ROS 2 <-> ArduPilot bridge. Needed both for the BlueBoat simulator and,
+# eventually, to talk to the real autopilot from the Jetson.
+#
+# Without mavros_msgs, boat_control/sim_node.py silently takes its fallback branch and
+# publishes geometry_msgs/Twist to /mavros/setpoint_velocity/cmd_vel_unstamped. That
+# topic is interpreted in the WORLD ENU frame, so the boat drives in a fixed compass
+# direction regardless of heading. The MAVROS path instead uses
+# /mavros/setpoint_raw/local with FRAME_BODY_NED, which is true body-frame control.
+RUN apt-get update && apt-get install -y \
+    ros-${ROS_DISTRO}-mavros \
+    ros-${ROS_DISTRO}-mavros-extras \
+    && rm -rf /var/lib/apt/lists/*
+
+# MAVROS needs the GeographicLib geoid datasets to convert AMSL <-> ellipsoid height.
+# Without them the mavros node aborts on startup.
+RUN bash /opt/ros/${ROS_DISTRO}/lib/mavros/install_geographiclib_datasets.sh
+
 WORKDIR $WORKSPACE
 
-
+# entrypoint.sh only sources ROS for PID 1, so a `docker exec -it boat_dev bash` shell
+# starts half-configured. Sourcing from .bashrc means every interactive shell gets both
+# the ROS underlay and the workspace overlay, which is what people actually use.
+RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> /root/.bashrc \
+    && echo "[ -f ${WORKSPACE}/install/setup.bash ] && source ${WORKSPACE}/install/setup.bash" >> /root/.bashrc
 
 COPY .docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

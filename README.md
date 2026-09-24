@@ -23,7 +23,7 @@ chmod +x ./scripts/run.sh
 ```
 
 ### Run Container & Enter Shell
-Start the development container:
+Start the development container (run this on your **host**, not inside the container):
 ```bash
 ./scripts/run.sh
 ```
@@ -33,22 +33,33 @@ Open a shell inside the container:
 docker exec -it boat_dev bash
 ```
 
-Inside the container, source ROS 2:
+ROS 2 and the workspace overlay are sourced automatically in interactive shells. If you
+ever need to do it by hand:
 ```bash
 source /opt/ros/$ROS_DISTRO/setup.bash
+source /workspace/install/setup.bash    # only exists after a build
 ```
 
 ## ROS 2 Packages
-All packages live in `src/` (mounted at `/workspace/src`).
+All packages live in `src/nodes/` (mounted at `/workspace/src/nodes`).
 
 ### 1. Create a Package
+Inside the container:
 ```bash
-cd /workspace/src
+cd /workspace/src/nodes
 ros2 pkg create --build-type ament_python <package_name> --dependencies rclpy
 ```
 
+> [!TIP]
+> **Fix File Ownership for Host IDE Editing**:
+> Because commands inside the container run as `root`, newly generated files in `src/` will be owned by `root`. If your host editor (VS Code, Cursor, etc.) gives a `permission denied` error when trying to edit or create files, run this from your **host** terminal to grant your user account ownership:
+> ```bash
+> docker exec boat_dev chown -R 1000:1000 /workspace/src
+> ```
+
 ### 2. Build a Package
-Build your package individually from `/workspace`:
+Always build from `/workspace`, never from `/workspace/src`. Building from `src/` creates a
+second, competing `install/` overlay and it becomes ambiguous which one you have sourced.
 ```bash
 cd /workspace
 colcon build --symlink-install --packages-select <package_name>
@@ -62,10 +73,35 @@ ros2 run <package_name> <executable_name>
 
 Example with the included perception package:
 ```bash
+cd /workspace
 colcon build --symlink-install --packages-select boat_perception
 source /workspace/install/setup.bash
 ros2 run boat_perception lidar_processor
 ```
+
+## Connecting to the BlueBoat Simulator
+`boat_control` drives the simulated boat over MAVROS. Note the executable is
+`drive_test`, not `sim_node`:
+```bash
+cd /workspace
+colcon build --symlink-install --packages-select boat_control
+source /workspace/install/setup.bash
+ros2 run boat_control drive_test
+```
+
+Requirements:
+- The simulator must already be running and publishing MAVROS topics
+  (`/mavros/state`, `/mavros/local_position/odom`).
+- `ROS_DOMAIN_ID` must match between this container and the simulator. Both default
+  to `10` via `.env`.
+- This image ships `ros-$ROS_DISTRO-mavros`. That matters: without `mavros_msgs`,
+  `sim_node.py` silently falls back to publishing `geometry_msgs/Twist` on
+  `/mavros/setpoint_velocity/cmd_vel_unstamped`, which ArduPilot interprets in the
+  **world ENU frame** — the boat then drives in a fixed compass direction regardless of
+  its heading. With MAVROS present it uses `/mavros/setpoint_raw/local` with
+  `FRAME_BODY_NED`, which is true body-frame control.
+
+A successful run prints a drive-test summary and reports several metres of travel.
 
 ## Sync with Changes
 ```bash
