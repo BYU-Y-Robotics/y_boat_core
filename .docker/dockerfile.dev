@@ -43,6 +43,8 @@ RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> /root/.bashrc \
 
 COPY .docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+RUN echo 'source /opt/ros/jazzy/setup.bash' >> /root/.bashrc
+
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["bash"]

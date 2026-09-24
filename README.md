@@ -27,6 +27,21 @@ Start the development container (run this on your **host**, not inside the conta
 ```bash
 ./scripts/run.sh
 ```
+This opens the container and runs the ROS2 startup
+
+For testing, run this as
+```bash
+./scripts/run.sh -i -p
+```
+The -i parameter makes it interactive, -p checks to make sure the docker image is updated and pulled correctly
+
+Run this to test every change you make.
+
+All packages should be created inside src/nodes/
+
+
+### Sync with Changes
+The following command will sync your local environment with origin/main
 
 Open a shell inside the container:
 ```bash
