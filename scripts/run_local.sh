@@ -7,8 +7,10 @@
 # pushed to Docker Hub yet -- currently MAVROS, which boat_control needs to talk to the
 # BlueBoat simulator.
 #
-# scripts/run.sh cannot do this: it runs `docker compose pull`, which fails for a tag
-# that only exists locally.
+# This is a convenience wrapper: it builds the image and then starts the container.
+# scripts/run.sh can also run a locally-built image (it only pulls when given -p), so
+# `docker build ... && ./scripts/run.sh -i` is equivalent. Once the image with MAVROS is
+# published to Docker Hub, this script is no longer needed.
 #
 #   ./scripts/run_local.sh              # build, then start the container
 #   ./scripts/run_local.sh --no-build   # skip the build, just start it
