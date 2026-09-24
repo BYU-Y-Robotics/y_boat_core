@@ -3,6 +3,7 @@ services:
     image: yrobotics/y_boat_core:${DOCKER_IMAGE}
     container_name: boat_dev
     network_mode: host
+    ipc: host
     privileged: true
     stdin_open: true
     tty: true

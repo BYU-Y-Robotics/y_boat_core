@@ -1,31 +1,3 @@
-import os
-import sys
-
-# Ensure FastDDS communicates over UDP sockets instead of isolated container shared memory
-if "FASTRTPS_DEFAULT_PROFILES_FILE" not in os.environ:
-    _xml_path = "/tmp/fastdds_udp.xml"
-    if not os.path.exists(_xml_path):
-        with open(_xml_path, "w") as _f:
-            _f.write("""<?xml version="1.0" encoding="UTF-8" ?>
-<profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
-    <transport_descriptors>
-        <transport_descriptor>
-            <transport_id>CustomUdp</transport_id>
-            <type>UDPv4</type>
-        </transport_descriptor>
-    </transport_descriptors>
-    <participant profile_name="participant_profile" is_default_profile="true">
-        <rtps>
-            <userTransports>
-                <transport_id>CustomUdp</transport_id>
-            </userTransports>
-            <useBuiltinTransports>false</useBuiltinTransports>
-        </rtps>
-    </participant>
-</profiles>""")
-    os.environ["FASTRTPS_DEFAULT_PROFILES_FILE"] = _xml_path
-    os.environ["RMW_FASTRTPS_USE_QOS_FROM_XML"] = "1"
-
 import math
 import time
 import rclpy

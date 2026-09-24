@@ -37,7 +37,7 @@ The -i parameter makes it interactive, -p checks to make sure the docker image i
 
 Run this to test every change you make.
 
-All packages should be created inside src/nodes/
+Node packages are conventionally created inside src/nodes/
 
 
 ### Sync with Changes
@@ -56,12 +56,11 @@ source /workspace/install/setup.bash    # only exists after a build
 ```
 
 ## ROS 2 Packages
-All packages live in `src/nodes/` (mounted at `/workspace/src/nodes`).
 
 ### 1. Create a Package
 Inside the container:
 ```bash
-cd /workspace/src/nodes
+cd /workspace/src/nodes      # or another directory under /workspace/src
 ros2 pkg create --build-type ament_python <package_name> --dependencies rclpy
 ```
 
