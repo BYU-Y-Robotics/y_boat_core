@@ -65,13 +65,6 @@ cd /workspace/src/nodes
 ros2 pkg create --build-type ament_python <package_name> --dependencies rclpy
 ```
 
-> [!TIP]
-> **Fix File Ownership for Host IDE Editing**:
-> Because commands inside the container run as `root`, newly generated files in `src/` will be owned by `root`. If your host editor (VS Code, Cursor, etc.) gives a `permission denied` error when trying to edit or create files, run this from your **host** terminal to grant your user account ownership:
-> ```bash
-> docker exec boat_dev chown -R 1000:1000 /workspace/src
-> ```
-
 ### 2. Build a Package
 Always build from `/workspace`, never from `/workspace/src`. Building from `src/` creates a
 second, competing `install/` overlay and it becomes ambiguous which one you have sourced.
