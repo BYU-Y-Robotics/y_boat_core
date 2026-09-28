@@ -17,7 +17,9 @@ RUN apt-get update && apt-get install -y \
     udev \
     ros-${ROS_DISTRO}-mavros \
     ros-${ROS_DISTRO}-mavros-extras \
-    && rm -rf /var/lib/apt/lists/*
+    ros-${ROS_DISTRO}-navigation2 \
+    ros-${ROS_DISTRO}-nav2-bringup \
+    && rm -rf /var/lib/apt/lists/* 
 
 # MAVROS needs the GeographicLib geoid datasets; without them its node exits on startup.
 RUN bash /opt/ros/${ROS_DISTRO}/lib/mavros/install_geographiclib_datasets.sh
