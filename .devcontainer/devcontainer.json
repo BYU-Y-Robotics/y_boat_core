@@ -17,7 +17,20 @@
 	// The optional 'workspaceFolder' property is the path VS Code should open by default when
 	// connected. This is typically a file mount in .devcontainer/docker-compose.yml
 	"workspaceFolder": "/workspace",
-	"postCreateCommand": "colcon build --symlink-install"
+	"postCreateCommand": "colcon build --symlink-install",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"Ranch-Hand-Robotics.rde-pack",
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"redhat.vscode-yaml",
+				"ms-azuretools.vscode-docker",
+				"ms-vscode.cpptools",
+				"ms-vscode.cmake-tools"
+			]
+		}
+	}
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
