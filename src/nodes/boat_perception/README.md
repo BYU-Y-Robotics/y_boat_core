@@ -1,6 +1,6 @@
 # boat_perception
 
-This package contains the perception nodes.
+This package provides the foundation for the perception system. It contains nodes for reading and processing sensor data to make sense of the surrounding environment.
 
 ## Package Development
 
