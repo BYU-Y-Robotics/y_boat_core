@@ -4,6 +4,9 @@
 # order, 99-char lines -- conflict with Ruff's defaults, so no other rule
 # groups are enabled.
 
+# Strong typing enforcement makes development easier since autocomplete can
+# help with the methods available on a given object.
+
 [lint]
 select = ["ANN"]
 

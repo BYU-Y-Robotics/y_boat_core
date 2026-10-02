@@ -3,6 +3,8 @@
 # Runs the same checks as CI (.github/workflows/ci.yml) locally, so failures
 # show up before opening a PR. Keep the two in sync when either changes.
 
+# Test a ROS package: `./scripts/test.sh <...package>`
+
 set -euo pipefail
 
 # ruff.toml and the Dockerfile paths are relative to the project root
@@ -14,12 +16,15 @@ ROS_DISTRO=jazzy
 SKIP_RUFF=0
 PACKAGES=()
 
+# Iterate through the parameters
 while [ $# -gt 0 ]; do
     case "$1" in
+        # Skip ruff check
         --no-ruff)
             SKIP_RUFF=1
             shift
             ;;
+        # Print info
         -h|--help)
             echo "Usage: $(basename "$0") [--no-ruff] [package ...]"
             echo
@@ -31,10 +36,12 @@ while [ $# -gt 0 ]; do
             echo "workspace, then runs the package tests -- the same steps as CI."
             exit 0
             ;;
+        # Throw for any other flag
         -*)
             echo "Unknown option: $1" >&2
             exit 1
             ;;
+        # Accept anything that isn't a flag assume it's a package
         *)
             PACKAGES+=("$1")
             shift
@@ -42,6 +49,7 @@ while [ $# -gt 0 ]; do
     esac
 done
 
+# Ruff check unless it should be skipped
 if [ "${SKIP_RUFF}" = 0 ]; then
     if ! command -v ruff > /dev/null; then
         echo "ruff not found. Install it with: pip install ruff==${RUFF_VERSION}" >&2
@@ -55,9 +63,11 @@ if [ "${SKIP_RUFF}" = 0 ]; then
     ruff check src .github
 fi
 
+# Run docker build
 echo "==> Building ${IMAGE} from .docker/dockerfile.dev"
 docker build -f .docker/dockerfile.dev -t "${IMAGE}" .
 
+# Run the tests for the packages taken as parameters
 TEST_SELECT=""
 if [ ${#PACKAGES[@]} -gt 0 ]; then
     TEST_SELECT="--packages-above ${PACKAGES[*]}"
@@ -67,8 +77,7 @@ else
 fi
 
 # One `docker run` because build/ and install/ live in the container's
-# /workspace, outside the bind-mounted src/. ROS is sourced explicitly because
-# the image only sources it from /root/.bashrc, which `bash -c` never reads.
+# /workspace and don't persist between runs.
 docker run --rm \
     -e ROS_DISTRO="${ROS_DISTRO}" \
     -e TEST_SELECT="${TEST_SELECT}" \
