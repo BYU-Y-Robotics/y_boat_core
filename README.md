@@ -43,37 +43,26 @@ Check out the tutorials in [ROS2 Demo] (https://github.com/byu-robotics-associat
 
 ### ROS 2 Package Development
 
-The `boat_perception` package uses a Python ROS 2 package layout. Its package-level launch file is:
+ROS 2 packages are located under `src/nodes/`.
 
-```text
-src/nodes/boat_perception/launch/boat_perception.launch.py
-```
+| Package | Description | Documentation |
+|---|---|---|
+| `boat_perception` | Perception nodes and launch files | [`README.md`](src/nodes/boat_perception/README.md) |
 
-The launch file is the entry point for the perception stack. It currently starts the `lidar_processor` node. When adding another node, first add its executable to `setup.py`, then add another `Node` action to `boat_perception.launch.py`:
-
-```python
-Node(
-	package='boat_perception',
-	executable='new_node',
-	name='new_node',
-	output='screen',
-),
-```
-
-After changing a node, launch file, or package configuration, rebuild and source the workspace:
+### Build a Package
 
 ```bash
-colcon build --packages-select boat_perception --symlink-install
+colcon build --packages-select <package_name> --symlink-install
 source install/setup.bash
 ```
 
-Run the complete perception launch file with:
+### Run a Package
 
 ```bash
-ros2 launch boat_perception boat_perception.launch.py
+ros2 launch <package_name> <launch_file>.launch.py
 ```
 
-The repository also includes a VS Code debug configuration at `.vscode/launch.json`. Select `ROS2: Debug ROS 2 Launch File` from Run and Debug to debug the launch file and its nodes. This configuration targets the installed launch file, so rebuild the package before starting a debugging session after changing launch-related files.
+For package-specific instructions, see that package's README.
 
 ### Sync with Changes
 The following command will sync your local environment with origin/main
