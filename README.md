@@ -48,6 +48,20 @@ pip install ruff==0.16.5
 ruff check src .github
 ```
 
+#### Help with strong typed syntax
+In VS Code, install the recommended extensions when prompted (or search `@recommended` in the Extensions view). Missing annotations are then underlined as you type. Hover over one and click its rule code to open Ruff's explanation with a before/after example.
+
+```python
+# Syntax for declaring types when defining a function
+def int_to_string(parameter_name: int) -> str:
+    return str(parameter_name)
+
+# Syntax for declaring type on a variable
+my_string: str = int_to_string(5) # This isn't necessary, and isn't enforced in the tests, but it's still helpful sometimes.
+```
+
+It's also good to understand that adding these strong type declarations do not change the behavior of the code, it simply makes the code more readable and makes development easier.
+
 ### Run Tests Before Opening a PR
 Every PR runs CI checks: the type annotation check above, a build of the Docker image and workspace, and the tests for each package the PR changes. Run the same checks locally with:
 ```bash
