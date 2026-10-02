@@ -23,8 +23,10 @@ setup(
         ],
     },
     entry_points={
-        'console_scripts': [
-            'lidar_processor = boat_perception.lidar_processor:main',
-        ],
-    },
+    'console_scripts': [
+        'lidar_processor = boat_perception.lidar_processor:main',
+        'image_feed_node = boat_perception.image_feed.image_feed_node:main',
+        'image_viewer_node = boat_perception.image_feed.image_viewer_node:main',
+    ],
+},
 )
