@@ -1,25 +1,47 @@
 import rclpy
 from rclpy.node import Node
+from rclpy.utilities import try_shutdown
 from rclpy.qos import qos_profile_sensor_data
 from std_msgs.msg import Header
 from vision_msgs.msg import Detection2DArray, Detection3DArray
 from sensor_msgs.msg import PointCloud2
 from message_filters import ApproximateTimeSynchronizer, Subscriber
+from rcl_interfaces.msg import ParameterDescriptor, FloatingPointRange, IntegerRange
 
 class ObjectAssociation(Node):
-
+    """This node reads 2d detections and a lidar stream and turns them into 3d detections"""
     def __init__(self):
         super().__init__('object_association')
+
+        self.declare_parameter('sync_slop', 0.05, ParameterDescriptor(
+            description="Max timestamp difference (s) between paired detections and clouds",
+            floating_point_range=[FloatingPointRange(from_value=0.0, to_value=1.0)]
+        ))
+        self.declare_parameter('queue_size', 10, ParameterDescriptor(
+            description="Number of buffered point cloud and detection messages",
+            integer_range=[IntegerRange(from_value=1, to_value=20)]
+        ))
+
+        sync_slop_value = self.get_parameter('sync_slop').value
+        if not isinstance(sync_slop_value, (int, float)):
+            raise TypeError('sync_slop must be a number')
+        sync_slop = float(sync_slop_value)
+
+        queue_size_value = self.get_parameter('queue_size').value
+        if not isinstance(queue_size_value, int):
+            raise TypeError('queue_size must be an integer')
+        queue_size = int(queue_size_value)
 
         detection_subscription = Subscriber( self, Detection2DArray, 'camera/detections')
         lidar_subscription = Subscriber(self, PointCloud2, 'lidar/point_cloud_rect', qos_profile=qos_profile_sensor_data)
 
-        self.syncronizer = ApproximateTimeSynchronizer([detection_subscription, lidar_subscription], queue_size=10, slop=0.06)
+        self.syncronizer = ApproximateTimeSynchronizer([detection_subscription, lidar_subscription], queue_size=queue_size, slop=sync_slop)
         self.syncronizer.registerCallback(self.on_synced)
 
         self.publisher = self.create_publisher(Detection3DArray, 'object/detections', 10)
 
     def on_synced(self, det_msg: Detection2DArray, cloud_msg: PointCloud2) -> None:
+        """Handles a synced set of detection and point cloud messages"""
         # right now, this is just going to publish an empty detection array
         msg = Detection3DArray()
         msg.header = Header(stamp=det_msg.header.stamp, frame_id=cloud_msg.header.frame_id)
@@ -27,9 +49,7 @@ class ObjectAssociation(Node):
         return
 
 
-
-
-def main(args=None):
+def main(args: list[str] | None = None) -> None:
     rclpy.init(args=args)
     node = ObjectAssociation()
     try:
@@ -38,4 +58,4 @@ def main(args=None):
         pass
     finally:
         node.destroy_node()
-        rclpy.try_shutdown()
+        try_shutdown()

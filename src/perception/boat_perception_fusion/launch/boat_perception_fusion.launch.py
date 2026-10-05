@@ -1,4 +1,4 @@
-from launch import LaunchDescription # type: ignore
+from launch import LaunchDescription # pyright: ignore[reportMissingTypeStubs]
 from launch_ros.actions import Node
 
 def generate_launch_description():
