@@ -153,7 +153,7 @@ git pull origin <branch-name>
 ```
 This is the command to run on the boat to start everything at once. It doesn't open the terminal or pull the latest docker image
 
-### Foxglove
+### Data Visualization
 
 The development container includes two VS Code tasks for starting the
 [Foxglove bridge](https://docs.foxglove.dev/docs/fleet/bridge):
