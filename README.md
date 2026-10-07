@@ -153,3 +153,18 @@ git pull origin <branch-name>
 ```
 This is the command to run on the boat to start everything at once. It doesn't open the terminal or pull the latest docker image
 
+### Foxglove
+
+The development container includes two VS Code tasks for starting the
+[Foxglove bridge](https://docs.foxglove.dev/docs/fleet/bridge):
+You can view the bridge data using either [Foxglove](https://foxglove.dev/) (you can get a free license as a student) or
+[Lichtblick](https://github.com/lichtblick-suite/lichtblick) (open source).
+
+1. Open the Command Palette in VS Code (`Ctrl+Shift+P` or `Cmd+Shift+P`).
+2. Select **Tasks: Run Task**.
+3. Choose one of the following tasks:
+   - **Foxglove bridge (live)** for live ROS time.
+   - **Foxglove bridge (sim time)** when using simulated ROS time.
+4. In Foxglove, connect to `ws://localhost:8765`.
+
+The bridge task runs in a dedicated VS Code terminal. You can stop the task with `Ctrl+C` when you are finished.
