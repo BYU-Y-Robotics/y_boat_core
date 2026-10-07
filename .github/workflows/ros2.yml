@@ -4,7 +4,7 @@ on:
     pull_request:
         paths:
             - 'src/**'
-            - 'ruff.toml'
+            - '.ruff.toml'
 
 concurrency:
   group: ros2-${{ github.event.pull_request.number }}
