@@ -1,7 +1,8 @@
-from launch import LaunchDescription # pyright: ignore[reportMissingTypeStubs]
-from launch_ros.actions import Node
+from launch import LaunchDescription
+from launch_ros.actions import Node, PushROSNamespace
+from launch.actions import GroupAction
 
-def generate_launch_description():
+def generate_launch_description() -> LaunchDescription:
     launch_description = LaunchDescription()
     object_association_node = Node(
         package="boat_perception_fusion",
@@ -10,5 +11,10 @@ def generate_launch_description():
         output="screen"
     )
 
-    launch_description.add_action(object_association_node)
+    node_group = GroupAction([
+        PushROSNamespace('perception'),
+        object_association_node
+    ])
+
+    launch_description.add_action(node_group)
     return launch_description

@@ -10,7 +10,7 @@ from rcl_interfaces.msg import ParameterDescriptor, FloatingPointRange, IntegerR
 
 class ObjectAssociation(Node):
     """This node reads 2d detections and a lidar stream and turns them into 3d detections"""
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__('object_association')
 
         self.declare_parameter('sync_slop', 0.05, ParameterDescriptor(
