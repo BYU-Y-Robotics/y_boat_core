@@ -13,9 +13,9 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='root',
-    maintainer_email='57306301+StephenDay1@users.noreply.github.com',
-    description='TODO: Package description',
+    maintainer='Stephen Day',
+    maintainer_email='sday1804@byu.edu',
+    description='Package for handling the YOLO model and image processing for the BYU RoboBoat.',
     license='Apache-2.0',
     extras_require={
         'test': [

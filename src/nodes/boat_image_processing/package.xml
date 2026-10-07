@@ -3,7 +3,7 @@
 <package format="3">
   <name>boat_image_processing</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>Package for handling the YOLO model and image processing for the BYU RoboBoat.</description>
   <maintainer email="sday1804@byu.edu">Stephen Day</maintainer>
   <license>Apache-2.0</license>
 
