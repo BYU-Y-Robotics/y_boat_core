@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
     udev \
     ros-${ROS_DISTRO}-navigation2 \
     ros-${ROS_DISTRO}-nav2-bringup \
+    ros-${ROS_DISTRO}-foxglove-bridge \
     && rm -rf /var/lib/apt/lists/* 
 
 WORKDIR ${WORKSPACE}
