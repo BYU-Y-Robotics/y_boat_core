@@ -79,24 +79,14 @@ fi
 # One `docker run` because build/ and install/ live in the container's
 # /workspace and don't persist between runs.
 docker run --rm \
-    -e ROS_DISTRO="${ROS_DISTRO}" \
     -e TEST_SELECT="${TEST_SELECT}" \
     -v "$PWD/src:/workspace/src" \
     "${IMAGE}" \
     bash -c '
         set -e
         source "/opt/ros/$ROS_DISTRO/setup.bash"
-        echo "==> Installing package dependencies (rosdep)"
-        apt-get update -qq
-        rosdep update -q --rosdistro "$ROS_DISTRO"
-        rosdep install --from-paths src --ignore-src -y -q --rosdistro "$ROS_DISTRO"
-
-        echo "==> colcon build"
-        colcon build
-
-        echo "==> colcon test"
-        # colcon test exits 0 even when tests fail; test-result is what
-        # prints the failure summary and sets the exit code.
-        colcon test $TEST_SELECT
+        colcon build --event-handlers console_direct+
+        colcon test --event-handlers console_direct+ $TEST_SELECT
         colcon test-result --verbose
-    '
+        '
+
