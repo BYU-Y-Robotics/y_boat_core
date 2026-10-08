@@ -7,6 +7,7 @@ from vision_msgs.msg import Detection2DArray, Detection3DArray
 from sensor_msgs.msg import PointCloud2
 from message_filters import ApproximateTimeSynchronizer, Subscriber
 from rcl_interfaces.msg import ParameterDescriptor, FloatingPointRange, IntegerRange
+from sensor_msgs.msg import CameraInfo
 
 class ObjectAssociation(Node):
     """This node reads 2d detections and a lidar stream and turns them into 3d detections"""
@@ -32,20 +33,33 @@ class ObjectAssociation(Node):
             raise TypeError('queue_size must be an integer')
         queue_size = int(queue_size_value)
 
+        self.camera_info = None
+
         detection_subscription = Subscriber( self, Detection2DArray, 'camera/detections')
         lidar_subscription = Subscriber(self, PointCloud2, 'lidar/point_cloud_rect', qos_profile=qos_profile_sensor_data)
+        self.create_subscription(CameraInfo, 'camera/camera_info', self.on_camera_info, qos_profile=qos_profile_sensor_data)
 
         self.syncronizer = ApproximateTimeSynchronizer([detection_subscription, lidar_subscription], queue_size=queue_size, slop=sync_slop)
         self.syncronizer.registerCallback(self.on_synced)
 
-        self.publisher = self.create_publisher(Detection3DArray, 'object/detections', 10)
+        self.publisher = self.create_publisher(Detection3DArray, 'objects/detections', 10)
+        return
 
     def on_synced(self, det_msg: Detection2DArray, cloud_msg: PointCloud2) -> None:
         """Handles a synced set of detection and point cloud messages"""
+        # wait for camera info
+        if self.camera_info is None:
+            self.get_logger().warn("Waiting for camera_info", throttle_duration_sec=0.5)
+            return
         # right now, this is just going to publish an empty detection array
         msg = Detection3DArray()
         msg.header = Header(stamp=det_msg.header.stamp, frame_id=cloud_msg.header.frame_id)
         self.publisher.publish(msg)
+        return
+
+    def on_camera_info(self, camera_info: CameraInfo) -> None:
+        """Handles updated camera_info"""
+        self.camera_info = camera_info
         return
 
 
