@@ -20,5 +20,15 @@
 
     // Ruff's import sorting doesn't match the Google import order that
     // ament_flake8 checks, so turn it off to keep it from breaking that test.
-    "ruff.organizeImports": false
+    "ruff.organizeImports": false,
+    "python-envs.defaultEnvManager": "ms-python.python:system",
+
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportUnknownMemberType": "none",
+        "reportUnknownArgumentType": "none",
+        "reportUnknownVariableType": "none",
+        "reportMissingTypeStubs": "none",
+        "reportMissingParameterType": "none",
+        "reportUnknownLambdaType": "none"
+    }
 }
