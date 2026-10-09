@@ -16,9 +16,9 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='root',
+    maintainer='Corban Thompson',
     maintainer_email='corbant25@gmail.com',
-    description='TODO: Package description',
+    description='Nodes for fusing visual data into 3d object detections',
     license='Apache-2.0',
     extras_require={
         'test': [
