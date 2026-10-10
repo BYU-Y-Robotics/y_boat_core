@@ -40,7 +40,7 @@ class ImageViewerNode(Node):
 
     def __init__(self):
         super().__init__("image_viewer_node")
-        self.declare_parameter("topic", "camera/image_raw")
+        self.declare_parameter("topic", "camera/image_rect") #camera/image_rect or camera/image_raw
         self.declare_parameter("mode", "file")  # file | window | http
         self.declare_parameter("output_path", "/workspace/src/latest.jpg")
         self.declare_parameter("save_every_sec", 0.5)

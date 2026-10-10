@@ -1,3 +1,5 @@
+import os
+from glob import glob
 from setuptools import find_packages, setup
 
 package_name = 'boat_perception'
@@ -10,6 +12,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        (os.path.join('share', package_name, 'launch'), glob('launch/*.launch.py')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -26,6 +29,7 @@ setup(
     'console_scripts': [
         'lidar_processor = boat_perception.lidar_processor:main',
         'image_feed_node = boat_perception.image_feed.image_feed_node:main',
+        'image_rectifier_node = boat_perception.image_feed.image_rectifier:main',
         'image_viewer_node = boat_perception.image_feed.image_viewer_node:main',
     ],
 },
