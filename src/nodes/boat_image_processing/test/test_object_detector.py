@@ -48,7 +48,7 @@ def spin_until(
     condition: Callable[[], bool],
     timeout_sec: float = TIMEOUT_SEC,
 ) -> bool:
-    """Helper to spin the executor until `condition()` is true or the timeout expires."""
+    """Spin the executor until `condition()` is true or the timeout expires."""
     end = time.monotonic() + timeout_sec
     while time.monotonic() < end:
         if condition():
